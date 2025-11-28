@@ -195,15 +195,6 @@ export const getOauthCallbackHandler = factory.createHandlers(
       return c.redirect(`${env.FRONTEND_URL}/`);
     } catch (err) {
       if (err instanceof HTTPException) {
-        if (err.status >= 400 && err.status < 500) {
-          logger.error(`OAuth authentication failed for ${provider}`, {
-            module: "auth",
-            action: "oauth:authentication:failed",
-            provider,
-            status: err.status,
-            message: err.message,
-          });
-        }
         throw err;
       }
 
@@ -212,13 +203,6 @@ export const getOauthCallbackHandler = factory.createHandlers(
         action: "oauth:callback:error",
         provider,
         error: err,
-      });
-
-      throw new HTTPException(StatusCodes.HTTP_500_INTERNAL_SERVER_ERROR, {
-        message: "Internal Server Error",
-        res: c.json({
-          message: "Internal Server Error",
-        }),
       });
     }
   },

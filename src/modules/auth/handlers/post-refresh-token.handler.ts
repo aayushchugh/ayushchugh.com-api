@@ -73,33 +73,5 @@ export const postRefreshTokenHandler = factory.createHandlers(async (c) => {
       action: "token:refresh:error",
       error: err instanceof Error ? err.message : String(err),
     });
-
-    // Check for specific error status codes
-    if (err instanceof HTTPException) {
-      if (err.status === StatusCodes.HTTP_404_NOT_FOUND) {
-        throw new HTTPException(StatusCodes.HTTP_404_NOT_FOUND, {
-          message: "Session not found",
-          res: c.json({
-            message: "Session not found",
-          }),
-        });
-      }
-
-      if (err.status === StatusCodes.HTTP_401_UNAUTHORIZED) {
-        throw new HTTPException(StatusCodes.HTTP_401_UNAUTHORIZED, {
-          message: "Session expired. Please re-authenticate.",
-          res: c.json({
-            message: "Session expired. Please re-authenticate.",
-          }),
-        });
-      }
-    }
-
-    throw new HTTPException(StatusCodes.HTTP_500_INTERNAL_SERVER_ERROR, {
-      message: "Internal Server Error",
-      res: c.json({
-        message: "Internal Server Error",
-      }),
-    });
   }
 });
