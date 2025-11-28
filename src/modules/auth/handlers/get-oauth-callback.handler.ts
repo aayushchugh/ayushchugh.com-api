@@ -8,6 +8,8 @@ import { OAuthService } from "../services";
 import { SessionProvider } from "@/db/schema";
 import { oauthProviderFactory } from "../providers";
 import { logger } from "@/lib/logger";
+import { setCookie } from "hono/cookie";
+import env from "@/config/env";
 
 export const getOauthCallbackHandler = factory.createHandlers(
   customZValidator(
@@ -174,24 +176,25 @@ export const getOauthCallbackHandler = factory.createHandlers(
         },
       );
 
-      return c.json({
-        message: "Logged in successfully",
-        payload: {
-          accessToken: serverAccessToken,
-          refreshToken: serverRefreshToken,
-        },
+      setCookie(c, "accessToken", serverAccessToken, {
+        httpOnly: true,
+        secure: env.NODE_ENV === "production",
+        sameSite: "Lax",
+        maxAge: 60 * 60,
+        path: "/",
       });
+
+      setCookie(c, "refreshToken", serverRefreshToken, {
+        httpOnly: true,
+        secure: env.NODE_ENV === "production",
+        sameSite: "Lax",
+        maxAge: 60 * 60 * 24 * 90,
+        path: "/",
+      });
+
+      return c.redirect(`${env.FRONTEND_URL}/`);
     } catch (err) {
       if (err instanceof HTTPException) {
-        if (err.status >= 400 && err.status < 500) {
-          logger.error(`OAuth authentication failed for ${provider}`, {
-            module: "auth",
-            action: "oauth:authentication:failed",
-            provider,
-            status: err.status,
-            message: err.message,
-          });
-        }
         throw err;
       }
 
@@ -200,13 +203,6 @@ export const getOauthCallbackHandler = factory.createHandlers(
         action: "oauth:callback:error",
         provider,
         error: err,
-      });
-
-      throw new HTTPException(StatusCodes.HTTP_500_INTERNAL_SERVER_ERROR, {
-        message: "Internal Server Error",
-        res: c.json({
-          message: "Internal Server Error",
-        }),
       });
     }
   },

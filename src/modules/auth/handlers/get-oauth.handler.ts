@@ -3,7 +3,7 @@ import { HTTPException } from "hono/http-exception";
 import StatusCodes from "@/config/status-codes";
 import { customZValidator } from "@/middlewares/custom-z-validator";
 import { z } from "zod";
-import { generateStateToken } from "@/lib/helpers";
+import { generateStateToken } from "@/lib/helper";
 import { signJwt } from "@/lib/jwt";
 import { OAuthService } from "../services";
 import { SessionProvider } from "@/db/schema";
