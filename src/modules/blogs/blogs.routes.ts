@@ -4,6 +4,7 @@ import { authValidator } from "@/middlewares/enforce-auth.middleware";
 import { getAllBlogs } from "@/modules/blogs/handlers/get-blogs.handler";
 import { getBlogById } from "@/modules/blogs/handlers/get-blogs-by-id.handler";
 import { updateBlogById } from "@/modules/blogs/handlers/patch-update-blogs-by-id.handler";
+import { deleteBlogById } from "@/modules/blogs//handlers/delete-blogs-by-id.handler";
 
 const blogRoutes = new Hono();
 
@@ -13,6 +14,8 @@ blogRoutes.post("/create", authValidator, ...createBlog);
 blogRoutes.get("/list", ...getAllBlogs);
 // get a specific blog by id
 blogRoutes.get("/:id", ...getBlogById);
+// delete blog by specific id
+blogRoutes.delete("/:id", ...deleteBlogById);
 // update blog by id
 blogRoutes.patch("/update/:id", authValidator, ...updateBlogById);
 
