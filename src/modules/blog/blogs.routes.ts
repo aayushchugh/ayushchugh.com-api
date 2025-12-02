@@ -1,10 +1,10 @@
 import { Hono } from "hono";
-import { createBlog } from "@/modules/blogs/handlers/post-create-blog.handler";
+import { createBlog } from "@/modules/blog/handlers/post-create-blog.handler";
 import { authValidator } from "@/middlewares/enforce-auth.middleware";
-import { getAllBlogs } from "@/modules/blogs/handlers/get-blogs.handler";
-import { getBlogById } from "@/modules/blogs/handlers/get-blogs-by-id.handler";
-import { updateBlogById } from "@/modules/blogs/handlers/patch-update-blogs-by-id.handler";
-import { deleteBlogById } from "@/modules/blogs//handlers/delete-blogs-by-id.handler";
+import { getAllBlogs } from "@/modules/blog/handlers/get-blogs.handler";
+import { getBlogById } from "@/modules/blog/handlers/get-blogs-by-id.handler";
+import { updateBlogById } from "@/modules/blog/handlers/patch-update-blogs-by-id.handler";
+import { deleteBlogById } from "@/modules/blog/handlers/delete-blogs-by-id.handler";
 
 const blogRoutes = new Hono();
 

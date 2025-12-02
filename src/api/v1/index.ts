@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import authRoutes from "@/modules/auth/auth.routes";
-import blogRoutes from "@/modules/blogs/blogs.routes";
+import blogRoutes from "@/modules/blog/blogs.routes";
 import experienceRoutes from "@/modules/experience/experience.route";
 import projectsRoutes from "@/modules/projects/projects.route";
 
