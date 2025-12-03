@@ -1,5 +1,5 @@
 import StatusCodes from "@/config/status-codes";
-import { WorkExperienceModel } from "@/db/schema/experience/experience.db";
+import { WorkExperienceModel } from "@/db/schema/work/work.db";
 import { factory } from "@/lib/factory";
 import { logger } from "@/lib/logger";
 import { HTTPException } from "hono/http-exception";

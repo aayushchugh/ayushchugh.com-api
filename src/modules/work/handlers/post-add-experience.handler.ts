@@ -1,5 +1,5 @@
 import StatusCodes from "@/config/status-codes";
-import { WorkExperienceModel } from "@/db/schema/experience/experience.db";
+import { WorkExperienceModel } from "@/db/schema/work/work.db";
 import { factory } from "@/lib/factory";
 import { logger } from "@/lib/logger";
 import { customZValidator } from "@/middlewares/custom-z-validator";
@@ -46,17 +46,19 @@ export const addExperience = factory.createHandlers(
         logo,
         location,
         website,
-        role,
-        startDate: new Date(startDate),
-        endDate: isCurrent ? null : endDate ? new Date(endDate) : null,
-        workType,
-        technologies,
-        responsibilities,
+        position: {
+          role,
+          startDate: new Date(startDate),
+          endDate: isCurrent ? null : endDate ? new Date(endDate) : null,
+          workType,
+          technologies,
+          responsibilities,
+        },
       });
 
       return c.json(
         {
-          message: "Workd Experience added successfully",
+          message: "Work Experience added successfully",
           data: res,
         },
         StatusCodes.HTTP_201_CREATED,

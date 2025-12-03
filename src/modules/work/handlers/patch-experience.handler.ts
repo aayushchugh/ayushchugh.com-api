@@ -1,5 +1,5 @@
 import StatusCodes from "@/config/status-codes";
-import { WorkExperienceModel } from "@/db/schema/experience/experience.db";
+import { WorkExperienceModel } from "@/db/schema/work/work.db";
 import { factory } from "@/lib/factory";
 import { logger } from "@/lib/logger";
 import { customZValidator } from "@/middlewares/custom-z-validator";
@@ -84,31 +84,23 @@ export const updateExperienceById = factory.createHandlers(
         });
       }
 
-      const updateFields: Partial<{
-        company: string;
-        logo: string;
-        location: string;
-        website: string;
-        role: string;
-        startDate: Date;
-        endDate: Date | null;
-        isCurrent: boolean;
-        workType: string;
-        technologies: string[];
-        responsibilities: string[];
-      }> = {};
+      const updateFields: any = {};
 
+      // Root level fields
       if (company) updateFields.company = company;
       if (logo) updateFields.logo = logo;
       if (location) updateFields.location = location;
       if (website) updateFields.website = website;
-      if (role) updateFields.role = role;
-      if (startDate) updateFields.startDate = new Date(startDate);
-      if (endDate !== undefined) updateFields.endDate = endDate ? new Date(endDate) : null;
-      if (isCurrent) updateFields.endDate = null;
-      if (workType) updateFields.workType = workType;
-      if (technologies) updateFields.technologies = technologies;
-      if (responsibilities) updateFields.responsibilities = responsibilities;
+
+      // Position nested fields
+      if (role) updateFields["position.role"] = role;
+      if (startDate) updateFields["position.startDate"] = new Date(startDate);
+      if (endDate !== undefined)
+        updateFields["position.endDate"] = endDate ? new Date(endDate) : null;
+      if (isCurrent) updateFields["position.endDate"] = null;
+      if (workType) updateFields["position.workType"] = workType;
+      if (technologies) updateFields["position.technologies"] = technologies;
+      if (responsibilities) updateFields["position.responsibilities"] = responsibilities;
 
       const res = await WorkExperienceModel.findByIdAndUpdate({ _id: id }, updateFields, {
         new: true,
