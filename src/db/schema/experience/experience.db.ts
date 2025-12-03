@@ -1,43 +1,45 @@
 import mongoose, { Schema } from "mongoose";
 import type { InferSchemaType } from "mongoose";
 
-const experienceSchema = new Schema(
+const workExperienceSchema = new Schema(
   {
-    experienceType: {
+    company: {
       type: String,
-      enum: ["work", "education", "volunteering"],
       required: true,
     },
-    title: {
+    logo: {
       type: String,
       required: true,
-      trim: true,
+    },
+    location: {
+      type: String,
+      required: true,
+    },
+    website: {
+      type: String,
+      required: true,
     },
     position: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    institute: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    responsibilities: {
-      type: [String],
-      default: [],
-    },
-    skills: {
-      type: [String],
-      default: [],
-    },
-    startDate: {
-      type: Date,
-      required: true,
-    },
-    endDate: {
-      type: Date,
-      default: null,
+      role: { type: String, required: true, trim: true },
+      startDate: {
+        type: Date,
+        required: true,
+      },
+      endDate: {
+        type: Date,
+      },
+      workType: {
+        type: String,
+        required: true,
+      },
+      technologies: {
+        type: [String],
+        default: [],
+      },
+      responsibilities: {
+        type: [String],
+        default: [],
+      },
     },
   },
   {
@@ -45,7 +47,7 @@ const experienceSchema = new Schema(
   },
 );
 
-export type ExperienceSchemaType = InferSchemaType<typeof experienceSchema>;
+export type WorkExperienceSchemaType = InferSchemaType<typeof workExperienceSchema>;
 
-export const ExperienceModel =
-  mongoose.models.Experience || mongoose.model("Experience", experienceSchema);
+export const WorkExperienceModel =
+  mongoose.models.WorkExperience || mongoose.model("workExperience", workExperienceSchema);

@@ -8,8 +8,10 @@ type LoggerModules =
   | "session"
   | "security"
   | "blogs"
-  | "experience"
-  | "projects";
+  | "work"
+  | "volunteer"
+  | "education"
+  | "project";
 
 interface LoggerMeta {
   module: LoggerModules;

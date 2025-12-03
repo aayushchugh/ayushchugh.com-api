@@ -1,11 +1,10 @@
 import StatusCodes from "@/config/status-codes";
-import { ExperienceModel } from "@/db/schema/experience/experience.db";
+import { WorkExperienceModel } from "@/db/schema/experience/experience.db";
 import { factory } from "@/lib/factory";
 import { logger } from "@/lib/logger";
 import { customZValidator } from "@/middlewares/custom-z-validator";
 import { HTTPException } from "hono/http-exception";
 import z from "zod";
-import { ZodExperienceType } from "@/modules/experience/handlers/post-add-experience.handler";
 
 export const updateExperienceById = factory.createHandlers(
   customZValidator("param", z.object({ id: z.string() })),
@@ -13,43 +12,59 @@ export const updateExperienceById = factory.createHandlers(
     "json",
     z
       .object({
-        experienceType: ZodExperienceType.optional(),
-        title: z
+        company: z
           .string()
-          .min(3, { message: "Title must be at least 3 characters" })
-          .max(50, { message: "Title cannot exceed 50 characters" })
+          .min(3, { message: "Company Name must be at least 3 characters" })
+          .max(50, { message: "Company Name cannot exceed 50 characters" })
           .optional(),
-        position: z
+        logo: z
           .string()
-          .min(3, "Position must be at least 3 characters")
-          .max(30, "Position cannot exceed 30 characters")
+          .min(3, "Logo must be at least 3 characters")
+          .max(30, "Logo cannot exceed 30 characters")
           .optional(),
-        institute: z
+        location: z
           .string()
-          .min(3, "Institute must be at least 3 characters")
-          .max(50, "Institute cannot exceed 50 characters")
+          .min(3, "Location must be at least 3 characters")
+          .max(50, "Location cannot exceed 50 characters")
           .optional(),
-
+        website: z
+          .string()
+          .min(3, "Website must be at least 3 characters")
+          .max(50, "Website cannot exceed 50 characters")
+          .optional(),
+        role: z
+          .string()
+          .min(3, "Role must be at least 3 characters")
+          .max(50, "Role cannot exceed 50 characters")
+          .optional(),
         startDate: z.iso.date().optional(),
 
         endDate: z.iso.date().nullable().optional(),
 
         isCurrent: z.boolean().optional(),
+        workType: z
+          .string()
+          .min(3, "WorkType must be at least 3 characters")
+          .max(50, "WorkType cannot exceed 50 characters")
+          .optional(),
 
-        skills: z.array(z.string()).optional().default([]),
+        technologies: z.array(z.string()).optional().default([]),
         responsibilities: z.array(z.string()).optional().default([]),
       })
       .refine(
         (data) => {
           // Remove fields that are empty, undefined, or default empty arrays
           const meaningfulFields = [
-            data.title,
-            data.position,
-            data.institute,
+            data.company,
+            data.logo,
+            data.location,
+            data.website,
+            data.role,
+            data.workType,
             data.startDate,
             data.endDate,
             data.isCurrent,
-            data.skills?.length ? data.skills : null,
+            data.technologies?.length ? data.technologies : null,
             data.responsibilities?.length ? data.responsibilities : null,
           ];
 
@@ -76,18 +91,20 @@ export const updateExperienceById = factory.createHandlers(
     try {
       const { id } = c.req.valid("param");
       const {
-        experienceType,
-        title,
-        position,
-        responsibilities,
-        skills,
+        company,
+        logo,
+        location,
+        website,
+        role,
         startDate,
         endDate,
-        institute,
+        workType,
         isCurrent,
+        technologies,
+        responsibilities,
       } = c.req.valid("json");
 
-      const experience = await ExperienceModel.findById(id);
+      const experience = await WorkExperienceModel.findById(id);
       if (!experience) {
         throw new HTTPException(StatusCodes.HTTP_404_NOT_FOUND, {
           message: "resource not found",
@@ -95,38 +112,38 @@ export const updateExperienceById = factory.createHandlers(
       }
 
       const updateFields: Partial<{
-        experienceType: z.infer<typeof ZodExperienceType>;
-        title: string;
-        position: string;
-        institute: string;
-        skills: string[];
-        responsibilities: string[];
+        company: string;
+        logo: string;
+        location: string;
+        website: string;
+        role: string;
         startDate: Date;
         endDate: Date | null;
         isCurrent: boolean;
+        workType: string;
+        technologies: string[];
+        responsibilities: string[];
       }> = {};
 
-      if (experienceType != undefined) {
-        const validTypes = ["work", "education", "volunteering"] as const;
-        if (validTypes.includes(experienceType)) {
-          updateFields.experienceType = experienceType;
-        }
-      }
-      if (title) updateFields.title = title;
-      if (position) updateFields.position = position;
-      if (institute) updateFields.institute = institute;
-      if (responsibilities) updateFields.responsibilities = responsibilities;
-      if (skills) updateFields.skills = skills;
+      if (company) updateFields.company = company;
+      if (logo) updateFields.logo = logo;
+      if (location) updateFields.location = location;
+      if (website) updateFields.website = website;
+      if (role) updateFields.role = role;
       if (startDate) updateFields.startDate = new Date(startDate);
       if (endDate !== undefined) updateFields.endDate = endDate ? new Date(endDate) : null;
       if (isCurrent) updateFields.endDate = null;
-      const res = await ExperienceModel.findByIdAndUpdate({ _id: id }, updateFields, {
+      if (workType) updateFields.workType = workType;
+      if (technologies) updateFields.technologies = technologies;
+      if (responsibilities) updateFields.responsibilities = responsibilities;
+
+      const res = await WorkExperienceModel.findByIdAndUpdate({ _id: id }, updateFields, {
         new: true,
       });
 
       return c.json(
         {
-          message: "Experience updated successfully",
+          message: "Work experience updated successfully",
           data: res,
         },
         StatusCodes.HTTP_200_OK,
@@ -136,14 +153,14 @@ export const updateExperienceById = factory.createHandlers(
         throw err;
       }
 
-      logger.error("Error updating experience", {
-        module: "experience",
-        action: "experience:update:error",
+      logger.error("Error updating work experience", {
+        module: "work",
+        action: "work:update:error",
         error: err instanceof Error ? err.message : String(err),
       });
 
       throw new HTTPException(StatusCodes.HTTP_500_INTERNAL_SERVER_ERROR, {
-        message: "Failed to update experience",
+        message: "Failed to update work experience",
       });
     }
   },
