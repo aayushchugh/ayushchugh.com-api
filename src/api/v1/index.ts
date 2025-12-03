@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import authRoutes from "@/modules/auth/auth.routes";
 import blogRoutes from "@/modules/blog/blogs.routes";
-import experienceRoutes from "@/modules/work/experience.route";
+import experienceRoutes from "@/modules/work/work.route";
 import projectsRoutes from "@/modules/projects/projects.route";
 import educationRoutes from "@/modules/education/education.route";
 import volunteerRoutes from "@/modules/volunteer/volunteer.route";
