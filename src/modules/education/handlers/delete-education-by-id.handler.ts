@@ -1,11 +1,11 @@
-import { ProjectModel } from "@/db/schema/projects/projects.db";
+import { EducationModel } from "@/db/schema/education/education.db";
 import { factory } from "@/lib/factory";
 import { logger } from "@/lib/logger";
 import { customZValidator } from "@/middlewares/custom-z-validator";
 import { HTTPException } from "hono/http-exception";
 import z from "zod";
 
-export const deleteProjectById = factory.createHandlers(
+export const deleteEducationById = factory.createHandlers(
   customZValidator(
     "param",
     z.object({
@@ -15,20 +15,19 @@ export const deleteProjectById = factory.createHandlers(
   async (c) => {
     try {
       const { id } = c.req.valid("param");
-      const project = await ProjectModel.findByIdAndDelete(id);
+      await EducationModel.findByIdAndDelete(id);
 
       return c.json({
-        message: "project deleted",
-        project,
+        message: "education deleted",
       });
     } catch (err) {
       if (err instanceof HTTPException) {
         throw err;
       }
 
-      logger.error("Error while deleting project", {
-        module: "project",
-        action: "project:delete:error",
+      logger.error("Error while deleting education", {
+        module: "education",
+        action: "education:delete:error",
         error: err instanceof Error ? err.message : String(err),
       });
     }

@@ -3,7 +3,7 @@ import type { InferSchemaType } from "mongoose";
 
 const educationSchema = new Schema(
   {
-    institution: {
+    institute: {
       type: String,
       required: true,
     },

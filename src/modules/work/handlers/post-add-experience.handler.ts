@@ -6,14 +6,12 @@ import { customZValidator } from "@/middlewares/custom-z-validator";
 import { HTTPException } from "hono/http-exception";
 import z from "zod";
 
-export const ZodExperienceType = z.enum(["work", "education", "volunteering"]);
-
 export const addExperience = factory.createHandlers(
   customZValidator(
     "json",
     z.object({
       company: z.string(),
-      logo: z.string(),
+      logo: z.string().optional(),
       location: z.string(),
       website: z.string(),
       role: z.string(),
