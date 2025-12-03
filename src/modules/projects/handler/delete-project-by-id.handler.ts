@@ -34,7 +34,7 @@ export const deleteProjectById = factory.createHandlers(
       }
 
       logger.error("Error while deleting project", {
-        module: "projects",
+        module: "project",
         action: "project:delete:error",
         error: err instanceof Error ? err.message : String(err),
       });

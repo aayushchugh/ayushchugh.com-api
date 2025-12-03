@@ -3,7 +3,6 @@ import { addExperience } from "@/modules/work/handlers/post-add-experience.handl
 import { getAllExperiences } from "@/modules/work/handlers/get-experience.handler";
 import { authValidator } from "@/middlewares/enforce-auth.middleware";
 import { updateExperienceById } from "@/modules/work/handlers/patch-experience.handler";
-import { getExperienceByTag } from "@/modules/work/handlers/get-experience-by-tag.handler";
 import { getExperienceById } from "@/modules/work/handlers/get-experience-by-id.handler";
 import { deleteExperienceById } from "@/modules/work/handlers/delete-experience-by-id.handler";
 
@@ -15,8 +14,6 @@ workExperienceRoutes.post("/create", authValidator, ...addExperience);
 workExperienceRoutes.get("/list", ...getAllExperiences);
 // get experience by id
 workExperienceRoutes.get("/:id", ...getExperienceById);
-// get experiences by tag
-workExperienceRoutes.get("/:tag", ...getExperienceByTag);
 // delete experience by id
 workExperienceRoutes.delete("/:id", authValidator, ...deleteExperienceById);
 //update experiences by id

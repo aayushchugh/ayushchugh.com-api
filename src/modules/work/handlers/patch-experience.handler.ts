@@ -12,42 +12,15 @@ export const updateExperienceById = factory.createHandlers(
     "json",
     z
       .object({
-        company: z
-          .string()
-          .min(3, { message: "Company Name must be at least 3 characters" })
-          .max(50, { message: "Company Name cannot exceed 50 characters" })
-          .optional(),
-        logo: z
-          .string()
-          .min(3, "Logo must be at least 3 characters")
-          .max(30, "Logo cannot exceed 30 characters")
-          .optional(),
-        location: z
-          .string()
-          .min(3, "Location must be at least 3 characters")
-          .max(50, "Location cannot exceed 50 characters")
-          .optional(),
-        website: z
-          .string()
-          .min(3, "Website must be at least 3 characters")
-          .max(50, "Website cannot exceed 50 characters")
-          .optional(),
-        role: z
-          .string()
-          .min(3, "Role must be at least 3 characters")
-          .max(50, "Role cannot exceed 50 characters")
-          .optional(),
+        company: z.string().optional(),
+        logo: z.string().optional(),
+        location: z.string().optional(),
+        website: z.string().optional(),
+        role: z.string().optional(),
         startDate: z.iso.date().optional(),
-
         endDate: z.iso.date().nullable().optional(),
-
         isCurrent: z.boolean().optional(),
-        workType: z
-          .string()
-          .min(3, "WorkType must be at least 3 characters")
-          .max(50, "WorkType cannot exceed 50 characters")
-          .optional(),
-
+        workType: z.string().optional(),
         technologies: z.array(z.string()).optional().default([]),
         responsibilities: z.array(z.string()).optional().default([]),
       })

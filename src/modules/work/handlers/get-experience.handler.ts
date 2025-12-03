@@ -1,12 +1,12 @@
 import StatusCodes from "@/config/status-codes";
-import { ExperienceModel } from "@/db/schema/experience/experience.db";
+import { WorkExperienceModel } from "@/db/schema/experience/experience.db";
 import { factory } from "@/lib/factory";
 import { logger } from "@/lib/logger";
 import { HTTPException } from "hono/http-exception";
 
 export const getAllExperiences = factory.createHandlers(async (c) => {
   try {
-    const experiences = await ExperienceModel.find();
+    const experiences = await WorkExperienceModel.find();
     return c.json(
       {
         message: "Fetched experiences  successfully",
@@ -19,9 +19,9 @@ export const getAllExperiences = factory.createHandlers(async (c) => {
       throw err;
     }
 
-    logger.error("Error while fetching experiences", {
-      module: "experience",
-      action: "experience:fetch:error",
+    logger.error("Error while fetching work experiences", {
+      module: "work",
+      action: "work:fetch:error",
       error: err instanceof Error ? err.message : String(err),
     });
 

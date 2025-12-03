@@ -10,14 +10,8 @@ export const createProject = factory.createHandlers(
   customZValidator(
     "json",
     z.object({
-      title: z
-        .string()
-        .min(3, { message: "Title must be at least 3 characters" })
-        .max(50, { message: "Title cannot exceed 50 characters" }),
-      description: z
-        .string()
-        .min(10, "Description must be at least 10 characters")
-        .max(300, "Description cannot exceed 300 characters"),
+      title: z.string(),
+      description: z.string(),
       logo: z.string(),
       link: z.string(),
       techStack: z.array(z.string()),
@@ -51,7 +45,7 @@ export const createProject = factory.createHandlers(
       }
 
       logger.error("Error add new project", {
-        module: "projects",
+        module: "project",
         action: "projects:create:error",
         error: err instanceof Error ? err.message : String(err),
       });

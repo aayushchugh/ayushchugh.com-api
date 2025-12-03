@@ -1,4 +1,4 @@
-import { ExperienceModel } from "@/db/schema/experience/experience.db";
+import { WorkExperienceModel } from "@/db/schema/experience/experience.db";
 import { factory } from "@/lib/factory";
 import { logger } from "@/lib/logger";
 import { customZValidator } from "@/middlewares/custom-z-validator";
@@ -15,7 +15,7 @@ export const getExperienceById = factory.createHandlers(
   async (c) => {
     try {
       const { id } = c.req.valid("param");
-      const experience = await ExperienceModel.findById(id);
+      const experience = await WorkExperienceModel.findById(id);
 
       // if experience does not exists
       if (!experience) {
@@ -33,9 +33,9 @@ export const getExperienceById = factory.createHandlers(
         throw err;
       }
 
-      logger.error("Error while fetching Experience", {
-        module: "experience",
-        action: "Experience:fetch:error",
+      logger.error("Error while fetching work Experience", {
+        module: "work",
+        action: "work:fetch:error",
         error: err instanceof Error ? err.message : String(err),
       });
     }

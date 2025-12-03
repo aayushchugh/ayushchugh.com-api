@@ -34,7 +34,7 @@ export const getProjectById = factory.createHandlers(
       }
 
       logger.error("Error while fetching project", {
-        module: "projects",
+        module: "project",
         action: "project:fetch:error",
         error: err instanceof Error ? err.message : String(err),
       });

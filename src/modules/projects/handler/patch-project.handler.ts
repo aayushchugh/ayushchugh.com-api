@@ -12,17 +12,9 @@ export const updateProjectById = factory.createHandlers(
     "json",
     z
       .object({
-        title: z
-          .string()
-          .min(3, { message: "Title must be at least 3 characters" })
-          .max(50, { message: "Title cannot exceed 50 characters" })
-          .optional(),
+        title: z.string().optional(),
         logo: z.string().optional(),
-        description: z
-          .string()
-          .min(10, "Description must be at least 10 characters")
-          .max(300, "Description cannot exceed 300 characters")
-          .optional(),
+        description: z.string().optional(),
         techStack: z.array(z.string()).optional(),
         link: z.string().optional(),
         workType: z.string().optional(),
@@ -95,7 +87,7 @@ export const updateProjectById = factory.createHandlers(
       }
 
       logger.error("Error updating project", {
-        module: "projects",
+        module: "project",
         action: "projects:update:error",
         error: err instanceof Error ? err.message : String(err),
       });

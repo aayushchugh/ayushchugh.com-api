@@ -1,4 +1,4 @@
-import { ExperienceModel } from "@/db/schema/experience/experience.db";
+import { WorkExperienceModel } from "@/db/schema/experience/experience.db";
 import { factory } from "@/lib/factory";
 import { logger } from "@/lib/logger";
 import { customZValidator } from "@/middlewares/custom-z-validator";
@@ -15,7 +15,7 @@ export const deleteExperienceById = factory.createHandlers(
   async (c) => {
     try {
       const { id } = c.req.valid("param");
-      const experience = await ExperienceModel.findByIdAndDelete(id);
+      const experience = await WorkExperienceModel.findByIdAndDelete(id);
 
       // if experience does not exists
       if (!experience) {
@@ -33,9 +33,9 @@ export const deleteExperienceById = factory.createHandlers(
         throw err;
       }
 
-      logger.error("Error while deleting experience", {
-        module: "experience",
-        action: "experience:delete:error",
+      logger.error("Error while deleting work experience", {
+        module: "work",
+        action: "work:delete:error",
         error: err instanceof Error ? err.message : String(err),
       });
     }

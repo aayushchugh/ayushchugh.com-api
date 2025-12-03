@@ -17,8 +17,8 @@ export const getAllProjects = factory.createHandlers(async (c) => {
     }
 
     logger.error("Error while fetching projects", {
-      module: "experience",
-      action: "experience:fetch:error",
+      module: "project",
+      action: "project:fetch:error",
       error: err instanceof Error ? err.message : String(err),
     });
 

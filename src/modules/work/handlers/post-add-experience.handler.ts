@@ -12,36 +12,15 @@ export const addExperience = factory.createHandlers(
   customZValidator(
     "json",
     z.object({
-      company: z
-        .string()
-        .min(3, { message: "Company Name must be at least 3 characters" })
-        .max(50, { message: "Company Name cannot exceed 50 characters" }),
-      logo: z
-        .string()
-        .min(3, "Logo must be at least 3 characters")
-        .max(30, "Logo cannot exceed 30 characters"),
-      location: z
-        .string()
-        .min(3, "Location must be at least 3 characters")
-        .max(50, "Location cannot exceed 50 characters"),
-      website: z
-        .string()
-        .min(3, "Website must be at least 3 characters")
-        .max(50, "Website cannot exceed 50 characters"),
-      role: z
-        .string()
-        .min(3, "Role must be at least 3 characters")
-        .max(50, "Role cannot exceed 50 characters"),
+      company: z.string(),
+      logo: z.string(),
+      location: z.string(),
+      website: z.string(),
+      role: z.string(),
       startDate: z.iso.date(),
-
       endDate: z.iso.date().nullable(),
-
       isCurrent: z.boolean(),
-      workType: z
-        .string()
-        .min(3, "WorkType must be at least 3 characters")
-        .max(50, "WorkType cannot exceed 50 characters"),
-
+      workType: z.string(),
       technologies: z.array(z.string()).optional().default([]),
       responsibilities: z.array(z.string()).optional().default([]),
     }),
