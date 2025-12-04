@@ -133,9 +133,7 @@ export namespace TokenService {
         tag: accessTokenTag,
       } = encrypt(tokenResponse.access_token);
 
-      // Calculate new expiration
-      const accessTokenExpiresIn = tokenResponse.expires_in || 3600; // Default 1 hour
-      const accessTokenExpiresAt = new Date(Date.now() + accessTokenExpiresIn * 1000);
+      const accessTokenExpiresAt = new Date(Date.now() + (tokenResponse.expires_in ?? 3600) * 1000);
 
       const payload: UpdateSession = {};
 
@@ -150,14 +148,9 @@ export namespace TokenService {
           tag: refreshTokenTag,
         } = encrypt(tokenResponse.refresh_token);
 
-        const refreshTokenExpiresAt = new Date(
-          Date.now() + (tokenResponse.expires_in || 90 * 24 * 60 * 60) * 1000,
-        );
-
         payload.providerRefreshToken = encryptedRefreshToken;
         payload.providerRefreshTokenIv = refreshTokenIv;
         payload.providerRefreshTokenTag = refreshTokenTag;
-        payload.providerRefreshTokenExpiresAt = refreshTokenExpiresAt;
       }
 
       payload.providerAccessToken = encryptedAccessToken;
@@ -178,8 +171,8 @@ export namespace TokenService {
 
       const accessToken = signJwt(
         {
-          userId: session.userId,
-          sessionId: session._id,
+          userId: session.userId.toString(),
+          sessionId: session._id.toString(),
         },
         {
           expiresIn: "1h",
@@ -189,8 +182,6 @@ export namespace TokenService {
       return {
         accessToken: accessToken,
         accessTokenExpiresAt,
-        refreshToken: tokenResponse.refresh_token,
-        refreshTokenExpiresAt: payload.providerRefreshTokenExpiresAt,
       };
     } catch (err) {
       logger.error("Error refreshing access token", {
