@@ -3,6 +3,7 @@ import { EducationModel } from "@/db/schema/education/education.db";
 import { factory } from "@/lib/factory";
 import { logger } from "@/lib/logger";
 import { customZValidator } from "@/middlewares/custom-z-validator";
+import { getNextOrder } from "@/utils/getNextOrder";
 import { HTTPException } from "hono/http-exception";
 import z from "zod";
 
@@ -24,6 +25,7 @@ export const addEducation = factory.createHandlers(
       const { institute, logo, degree, startDate, endDate, isCurrent, location } =
         c.req.valid("json");
 
+      const sortOrder = await getNextOrder("education");
       const res = await EducationModel.create({
         institute,
         logo,
@@ -31,6 +33,7 @@ export const addEducation = factory.createHandlers(
         startDate,
         degree,
         endDate: isCurrent ? null : endDate,
+        sortOrder,
       });
 
       return c.json(

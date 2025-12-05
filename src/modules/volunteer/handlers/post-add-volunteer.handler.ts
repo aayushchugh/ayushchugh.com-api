@@ -3,6 +3,7 @@ import { VolunteerModel } from "@/db/schema/volunteer/volunteer.db";
 import { factory } from "@/lib/factory";
 import { logger } from "@/lib/logger";
 import { customZValidator } from "@/middlewares/custom-z-validator";
+import { getNextOrder } from "@/utils/getNextOrder";
 import { HTTPException } from "hono/http-exception";
 import z from "zod";
 
@@ -24,6 +25,8 @@ export const addVolunteerExp = factory.createHandlers(
       const { organization, logo, startDate, endDate, isCurrent, location, responsibilities } =
         c.req.valid("json");
 
+      const sortOrder = await getNextOrder("volunteer");
+
       const volunteerExp = await VolunteerModel.create({
         organization,
         logo,
@@ -31,6 +34,7 @@ export const addVolunteerExp = factory.createHandlers(
         startDate,
         endDate: isCurrent ? null : endDate,
         responsibilities,
+        sortOrder,
       });
 
       return c.json(

@@ -3,6 +3,7 @@ import { WorkExperienceModel } from "@/db/schema/work/work.db";
 import { factory } from "@/lib/factory";
 import { logger } from "@/lib/logger";
 import { customZValidator } from "@/middlewares/custom-z-validator";
+import { getNextOrder } from "@/utils/getNextOrder";
 import { HTTPException } from "hono/http-exception";
 import z from "zod";
 
@@ -28,36 +29,49 @@ export const addExperience = factory.createHandlers(
       const {
         company,
         logo,
+        location,
         website,
         role,
-        location,
-        technologies,
-        workType,
-        responsibilities,
         startDate,
         endDate,
         isCurrent,
+        workType,
+        technologies,
+        responsibilities,
       } = c.req.valid("json");
 
-      const res = await WorkExperienceModel.create({
-        company,
-        logo,
-        location,
-        website,
-        position: {
-          role,
-          startDate: new Date(startDate),
-          endDate: isCurrent ? null : endDate ? new Date(endDate) : null,
-          workType,
-          technologies,
-          responsibilities,
-        },
-      });
+      const positionEntry = {
+        role,
+        startDate: new Date(startDate),
+        endDate: isCurrent ? null : endDate ? new Date(endDate) : null,
+        workType,
+        technologies,
+        responsibilities,
+      };
+
+      const existing = await WorkExperienceModel.findOne({ company });
+
+      let result;
+
+      if (existing) {
+        existing.positions.push(positionEntry);
+        result = await existing.save();
+      } else {
+        const sortOrder = await getNextOrder("work");
+        result = await WorkExperienceModel.create({
+          company,
+          logo,
+          location,
+          website,
+          positions: [positionEntry],
+          sortOrder,
+        });
+      }
 
       return c.json(
         {
-          message: "Work Experience added successfully",
-          data: res,
+          message: "Work Experience saved successfully",
+          data: result,
         },
         StatusCodes.HTTP_201_CREATED,
       );

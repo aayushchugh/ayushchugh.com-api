@@ -16,7 +16,22 @@ export const deleteProjectById = factory.createHandlers(
   async (c) => {
     try {
       const { id } = c.req.valid("param");
-      const project = await ProjectModel.findByIdAndDelete(id);
+      const project = await ProjectModel.findById(id);
+
+      if (!project) {
+        throw new HTTPException(StatusCodes.HTTP_404_NOT_FOUND, {
+          message: "Project not found",
+        });
+      }
+
+      const deletedOrder = project.sortOrder;
+
+      await ProjectModel.findByIdAndDelete(id);
+
+      await ProjectModel.updateMany(
+        { sortOrder: { $gt: deletedOrder } },
+        { $inc: { sortOrder: -1 } },
+      );
 
       return c.json({
         message: "project deleted",

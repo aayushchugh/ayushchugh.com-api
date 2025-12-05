@@ -158,8 +158,8 @@ export const getOauthCallbackHandler = factory.createHandlers(
       // Generate server JWT tokens
       const serverAccessToken = signJwt(
         {
-          userId: user._id,
-          sessionId: session._id,
+          userId: user._id.toString(),
+          sessionId: session._id.toString(),
         },
         {
           expiresIn: "1h",
@@ -168,8 +168,8 @@ export const getOauthCallbackHandler = factory.createHandlers(
 
       const serverRefreshToken = signJwt(
         {
-          userId: user._id,
-          sessionId: session._id,
+          userId: user._id.toString(),
+          sessionId: session._id.toString(),
         },
         {
           expiresIn: "90d",
@@ -192,7 +192,7 @@ export const getOauthCallbackHandler = factory.createHandlers(
         path: "/",
       });
 
-      return c.redirect(`${env.FRONTEND_URL}/`);
+      return c.redirect(`${env.FRONTEND_URL}/dashboard`);
     } catch (err) {
       if (err instanceof HTTPException) {
         throw err;

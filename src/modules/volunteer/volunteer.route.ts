@@ -5,18 +5,21 @@ import { getVolunteerExpById } from "@/modules/volunteer/handlers/get-volunteer-
 import { authValidator } from "@/middlewares/enforce-auth.middleware";
 import { deleteVolunteerExpById } from "@/modules/volunteer/handlers/delete-volunteer-by-id.handler";
 import { updateVolunteerExpById } from "@/modules/volunteer/handlers/patch-update-volunteer.handler";
+import { reorderVolunteer } from "@/modules/volunteer/handlers/patch-reorder-volunteer.handler";
 
 const volunteerRoutes = new Hono();
 
-// add experience
+// add voluneteer experience
 volunteerRoutes.post("/create", authValidator, ...addVolunteerExp);
-// get all expriences
+// get all voluneteer expriences
 volunteerRoutes.get("/list", ...getVolunteerExp);
-// get experience by id
+// get voluneteer experience by id
 volunteerRoutes.get("/:id", ...getVolunteerExpById);
-// delete experience by id
+// delete voluneteer experience by id
 volunteerRoutes.delete("/:id", authValidator, ...deleteVolunteerExpById);
-//update experiences by id
-volunteerRoutes.patch("/update/:id", ...updateVolunteerExpById);
+//update voluneteer experiences by id
+volunteerRoutes.patch("/update/:id", authValidator, ...updateVolunteerExpById);
+// reorder voluneteer experience
+volunteerRoutes.patch("/re-order", authValidator, ...reorderVolunteer);
 
 export default volunteerRoutes;

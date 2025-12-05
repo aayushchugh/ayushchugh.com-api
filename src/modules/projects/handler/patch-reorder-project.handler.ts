@@ -1,0 +1,49 @@
+import StatusCodes from "@/config/status-codes";
+import { ProjectModel } from "@/db/schema/projects/projects.db";
+import { factory } from "@/lib/factory";
+import { logger } from "@/lib/logger";
+import { customZValidator } from "@/middlewares/custom-z-validator";
+import { HTTPException } from "hono/http-exception";
+import z from "zod";
+
+const reorderSchema = z.object({
+  list: z.array(
+    z.object({
+      id: z.string(),
+      sortOrder: z.number().int().nonnegative(),
+    }),
+  ),
+});
+
+export const reorderProject = factory.createHandlers(
+  customZValidator("json", reorderSchema),
+
+  async (c) => {
+    try {
+      const { list } = c.req.valid("json");
+
+      const bulkOps = list.map((item) => ({
+        updateOne: {
+          filter: { _id: item.id },
+          update: { $set: { sortOrder: item.sortOrder } },
+        },
+      }));
+
+      await ProjectModel.bulkWrite(bulkOps);
+
+      return c.json({ message: "Project reordered successfully" }, StatusCodes.HTTP_200_OK);
+    } catch (err) {
+      if (err instanceof HTTPException) throw err;
+
+      logger.error("Error reordering project", {
+        module: "project",
+        action: "project:reorder:error",
+        error: err instanceof Error ? err.message : String(err),
+      });
+
+      throw new HTTPException(StatusCodes.HTTP_500_INTERNAL_SERVER_ERROR, {
+        message: "Failed to reorder project",
+      });
+    }
+  },
+);

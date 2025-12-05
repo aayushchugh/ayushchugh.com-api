@@ -3,6 +3,8 @@ import { getOauthHandler } from "@/modules/auth/handlers/get-oauth.handler";
 import { getOauthCallbackHandler } from "@/modules/auth/handlers/get-oauth-callback.handler";
 import { postRefreshTokenHandler } from "@/modules/auth/handlers/post-refresh-token.handler";
 import { verifySessionHandler } from "@/modules/auth/handlers/get-verify-session.handler";
+import { authValidator } from "@/middlewares/enforce-auth.middleware";
+import { logout } from "@/modules/auth/handlers/post-logout.handler";
 
 const authRoutes = new Hono();
 
@@ -16,5 +18,8 @@ authRoutes.post("/oauth/refresh", ...postRefreshTokenHandler);
 
 // verify route
 authRoutes.get("/verify-session", ...verifySessionHandler);
+
+// logout route
+authRoutes.post("/logout", authValidator, logout);
 
 export default authRoutes;

@@ -5,6 +5,7 @@ import { getAllBlogs } from "@/modules/blog/handlers/get-blogs.handler";
 import { getBlogById } from "@/modules/blog/handlers/get-blogs-by-id.handler";
 import { updateBlogById } from "@/modules/blog/handlers/patch-update-blogs-by-id.handler";
 import { deleteBlogById } from "@/modules/blog/handlers/delete-blogs-by-id.handler";
+import { reorderBlogs } from "@/modules/blog/handlers/patch-reorder-blog.handler";
 
 const blogRoutes = new Hono();
 
@@ -18,5 +19,7 @@ blogRoutes.get("/:id", ...getBlogById);
 blogRoutes.delete("/:id", authValidator, ...deleteBlogById);
 // update blog by id
 blogRoutes.patch("/update/:id", authValidator, ...updateBlogById);
+// update sort order
+blogRoutes.patch("/re-order", authValidator, ...reorderBlogs);
 
 export default blogRoutes;

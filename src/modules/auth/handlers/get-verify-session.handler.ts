@@ -1,5 +1,5 @@
 import StatusCodes from "@/config/status-codes";
-import { SessionModel, SessionStatus } from "@/db/schema";
+import { SessionModel, SessionStatus, UserModel } from "@/db/schema";
 import type { Session } from "@/db/schema";
 import { factory } from "@/lib/factory";
 import { verifyJwt } from "@/lib/jwt";
@@ -30,7 +30,7 @@ export const verifySessionHandler = factory.createHandlers(async (c) => {
       });
     }
 
-    const { sessionId } = decoded;
+    const { sessionId, userId } = decoded;
 
     const session: Session | null = await SessionModel.findById(sessionId);
 
@@ -55,6 +55,14 @@ export const verifySessionHandler = factory.createHandlers(async (c) => {
       });
     }
 
+    const user = await UserModel.findById(userId);
+
+    if (!user.isAdmin) {
+      throw new HTTPException(StatusCodes.HTTP_403_FORBIDDEN, {
+        message: "Admin access required",
+      });
+    }
+
     return c.json({
       success: true,
       message: "Session verified successfully",
@@ -66,8 +74,12 @@ export const verifySessionHandler = factory.createHandlers(async (c) => {
 
     logger.error("Error verifying user session", {
       module: "auth",
-      action: "token:refresh:error",
+      action: "token:verify:error",
       error: err instanceof Error ? err.message : String(err),
+    });
+
+    throw new HTTPException(StatusCodes.HTTP_500_INTERNAL_SERVER_ERROR, {
+      message: "Internal server error during verification",
     });
   }
 });

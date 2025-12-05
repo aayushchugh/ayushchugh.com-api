@@ -1,39 +1,45 @@
 import mongoose, { Schema } from "mongoose";
 import type { InferSchemaType } from "mongoose";
 
-const projectSchema = new Schema({
-  title: {
-    type: String,
-    required: true,
-    unique: true,
+const projectSchema = new Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    link: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    description: {
+      type: String,
+      minlength: 10,
+      maxlength: 300,
+    },
+    logo: {
+      type: String,
+      required: true,
+    },
+    techStack: {
+      type: [String],
+      default: [],
+    },
+    workType: {
+      type: String,
+      required: true,
+    },
+    category: {
+      type: String,
+      required: true,
+    },
+    sortOrder: { type: Number, required: true },
   },
-  link: {
-    type: String,
-    required: true,
-    unique: true,
+  {
+    timestamps: true,
   },
-  description: {
-    type: String,
-    minlength: 10,
-    maxlength: 300,
-  },
-  logo: {
-    type: String,
-    required: true,
-  },
-  techStack: {
-    type: [String],
-    default: [],
-  },
-  workType: {
-    type: String,
-    required: true,
-  },
-  category: {
-    type: String,
-    required: true,
-  },
-});
+);
 
 export type ProjectsSchemaType = InferSchemaType<typeof projectSchema>;
 

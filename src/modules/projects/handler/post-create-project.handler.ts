@@ -3,6 +3,7 @@ import { ProjectModel } from "@/db/schema/projects/projects.db";
 import { factory } from "@/lib/factory";
 import { logger } from "@/lib/logger";
 import { customZValidator } from "@/middlewares/custom-z-validator";
+import { getNextOrder } from "@/utils/getNextOrder";
 import { HTTPException } from "hono/http-exception";
 import z from "zod";
 
@@ -23,6 +24,7 @@ export const createProject = factory.createHandlers(
     try {
       const { title, description, link, logo, techStack, category, workType } = c.req.valid("json");
 
+      const sortOrder = await getNextOrder("project");
       const res = await ProjectModel.create({
         title,
         description,
@@ -31,7 +33,9 @@ export const createProject = factory.createHandlers(
         techStack,
         category,
         workType,
+        sortOrder,
       });
+
       return c.json(
         {
           message: "Project added successfully",
