@@ -4,34 +4,53 @@ import { factory } from "@/lib/factory";
 import { logger } from "@/lib/logger";
 import { customZValidator } from "@/middlewares/custom-z-validator";
 import { HTTPException } from "hono/http-exception";
+import mongoose from "mongoose";
 import z from "zod";
 
-export const getExperienceById = factory.createHandlers(
+export const getPositionExperienceById = factory.createHandlers(
   customZValidator(
     "param",
     z.object({
-      id: z.string(),
+      positionId: z.string(),
     }),
   ),
 
   async (c) => {
     try {
-      const { id } = c.req.valid("param");
+      const { positionId } = c.req.valid("param");
 
-      const experience = await WorkExperienceModel.findById(id).select(
-        "company logo location website",
-      );
+      const result = await WorkExperienceModel.aggregate([
+        {
+          $match: {
+            "positions._id": new mongoose.Types.ObjectId(positionId),
+          },
+        },
+        {
+          $unwind: "$positions",
+        },
+        {
+          $match: {
+            "positions._id": new mongoose.Types.ObjectId(positionId),
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            position: "$positions",
+          },
+        },
+      ]);
 
-      if (!experience) {
+      if (!result || result.length === 0) {
         throw new HTTPException(404, {
-          message: "Experience not found",
+          message: "Position not found",
         });
       }
 
       return c.json(
         {
           message: "Position fetched",
-          experience,
+          position: result[0].position,
         },
         StatusCodes.HTTP_200_OK,
       );

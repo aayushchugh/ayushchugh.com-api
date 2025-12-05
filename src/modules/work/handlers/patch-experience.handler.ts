@@ -4,13 +4,13 @@ import { factory } from "@/lib/factory";
 import { logger } from "@/lib/logger";
 import { customZValidator } from "@/middlewares/custom-z-validator";
 import { HTTPException } from "hono/http-exception";
+import mongoose from "mongoose";
 import z from "zod";
 
-export const updateExperienceById = factory.createHandlers(
+export const updatePositionExperienceById = factory.createHandlers(
   customZValidator(
     "param",
     z.object({
-      id: z.string(),
       positionId: z.string(),
     }),
   ),
@@ -19,10 +19,6 @@ export const updateExperienceById = factory.createHandlers(
     "json",
     z
       .object({
-        company: z.string().optional(),
-        logo: z.string().optional(),
-        location: z.string().optional(),
-        website: z.string().optional(),
         role: z.string().optional(),
         startDate: z.iso.date().optional(),
         endDate: z.iso.date().nullable().optional(),
@@ -34,10 +30,6 @@ export const updateExperienceById = factory.createHandlers(
       .refine(
         (data) => {
           const meaningful = [
-            data.company,
-            data.logo,
-            data.location,
-            data.website,
             data.role,
             data.workType,
             data.startDate,
@@ -57,13 +49,16 @@ export const updateExperienceById = factory.createHandlers(
 
   async (c) => {
     try {
-      const { id, positionId } = c.req.valid("param");
+      const { positionId } = c.req.valid("param");
       const updates = c.req.valid("json");
 
-      const experience = await WorkExperienceModel.findById(id);
+      const experience = await WorkExperienceModel.findOne({
+        "positions._id": new mongoose.Types.ObjectId(positionId),
+      });
+
       if (!experience) {
         throw new HTTPException(StatusCodes.HTTP_404_NOT_FOUND, {
-          message: "Experience not found",
+          message: "Position not found",
         });
       }
 
@@ -73,11 +68,6 @@ export const updateExperienceById = factory.createHandlers(
           message: `Position with id ${positionId} does not exist`,
         });
       }
-
-      if (updates.company) experience.company = updates.company;
-      if (updates.logo) experience.logo = updates.logo;
-      if (updates.location) experience.location = updates.location;
-      if (updates.website) experience.website = updates.website;
 
       if (updates.role) position.role = updates.role;
       if (updates.startDate) position.startDate = new Date(updates.startDate);
@@ -94,26 +84,26 @@ export const updateExperienceById = factory.createHandlers(
       if (updates.technologies) position.technologies = updates.technologies;
       if (updates.responsibilities) position.responsibilities = updates.responsibilities;
 
-      const updated = await experience.save();
+      await experience.save();
 
       return c.json(
         {
-          message: "Work experience updated successfully",
-          data: updated,
+          message: "Work position updated successfully",
+          position: position,
         },
         StatusCodes.HTTP_200_OK,
       );
     } catch (err) {
       if (err instanceof HTTPException) throw err;
 
-      logger.error("Error updating work experience", {
+      logger.error("Error updating work position", {
         module: "work",
         action: "work:update:error",
         error: err instanceof Error ? err.message : String(err),
       });
 
       throw new HTTPException(StatusCodes.HTTP_500_INTERNAL_SERVER_ERROR, {
-        message: "Failed to update work experience",
+        message: "Failed to update work position",
       });
     }
   },
