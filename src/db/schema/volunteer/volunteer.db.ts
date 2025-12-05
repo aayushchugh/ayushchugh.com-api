@@ -25,6 +25,7 @@ const volunteerSchema = new Schema(
       type: [String],
       default: [],
     },
+    sortOrder: { type: Number, required: true },
   },
   {
     timestamps: true,

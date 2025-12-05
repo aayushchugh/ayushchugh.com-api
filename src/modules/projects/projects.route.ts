@@ -5,6 +5,7 @@ import { authValidator } from "@/middlewares/enforce-auth.middleware";
 import { updateProjectById } from "@/modules/projects/handler/patch-project.handler";
 import { getProjectById } from "@/modules/projects/handler/get-project-by-id.handler";
 import { deleteProjectById } from "@/modules/projects/handler/delete-project-by-id.handler";
+import { reorderProject } from "@/modules/projects/handler/patch-reorder-project.handler";
 
 const projectsRoutes = new Hono();
 
@@ -18,5 +19,7 @@ projectsRoutes.get("/:id", ...getProjectById);
 projectsRoutes.delete("/:id", authValidator, ...deleteProjectById);
 //update projects by id
 projectsRoutes.patch("/update/:id", authValidator, ...updateProjectById);
+// re-order project
+projectsRoutes.patch("/re-order", authValidator, ...reorderProject);
 
 export default projectsRoutes;

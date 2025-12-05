@@ -5,6 +5,7 @@ import { getEducationById } from "@/modules/education/handlers/get-education-by-
 import { authValidator } from "@/middlewares/enforce-auth.middleware";
 import { deleteEducationById } from "@/modules/education/handlers/delete-education-by-id.handler";
 import { updateEducationById } from "@/modules/education/handlers/patch-update-education.handler";
+import { reorderEducation } from "@/modules/education/handlers/patch-reorder-education.handler";
 
 const educationRoutes = new Hono();
 
@@ -18,5 +19,7 @@ educationRoutes.get("/:id", ...getEducationById);
 educationRoutes.delete("/:id", authValidator, ...deleteEducationById);
 //update experiences by id
 educationRoutes.patch("/update/:id", authValidator, ...updateEducationById);
+// re-order education
+educationRoutes.patch("/re-order", authValidator, ...reorderEducation);
 
 export default educationRoutes;

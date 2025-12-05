@@ -3,6 +3,7 @@ import { WorkExperienceModel } from "@/db/schema/work/work.db";
 import { factory } from "@/lib/factory";
 import { logger } from "@/lib/logger";
 import { customZValidator } from "@/middlewares/custom-z-validator";
+import { getNextOrder } from "@/utils/getNextOrder";
 import { HTTPException } from "hono/http-exception";
 import z from "zod";
 
@@ -56,12 +57,14 @@ export const addExperience = factory.createHandlers(
         existing.positions.push(positionEntry);
         result = await existing.save();
       } else {
+        const sortOrder = await getNextOrder("work");
         result = await WorkExperienceModel.create({
           company,
           logo,
           location,
           website,
           positions: [positionEntry],
+          sortOrder,
         });
       }
 

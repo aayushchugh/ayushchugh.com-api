@@ -6,7 +6,7 @@ import { HTTPException } from "hono/http-exception";
 
 export const getAllProjects = factory.createHandlers(async (c) => {
   try {
-    const projects = await ProjectModel.find();
+    const projects = await ProjectModel.find().sort({ sortOrder: 1 });
     return c.json({
       message: "Fetched all projects successfully",
       projects,

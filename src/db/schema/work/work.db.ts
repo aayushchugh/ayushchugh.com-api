@@ -17,6 +17,7 @@ const workExperienceSchema = new Schema(
         responsibilities: { type: [String], default: [] },
       },
     ],
+    sortOrder: { type: Number, required: true },
   },
   { timestamps: true },
 );

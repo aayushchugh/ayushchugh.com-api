@@ -16,7 +16,7 @@ export const deleteBlogById = factory.createHandlers(
   async (c) => {
     try {
       const { id } = c.req.valid("param");
-      const blog = await BlogsModel.findByIdAndDelete(id);
+      const blog = await BlogsModel.findById(id);
 
       // if blog does not exists
       if (!blog) {
@@ -24,6 +24,15 @@ export const deleteBlogById = factory.createHandlers(
           message: "Blog not found",
         });
       }
+
+      const deletedOrder = blog.sortOrder;
+
+      await BlogsModel.findByIdAndDelete(id);
+
+      await BlogsModel.updateMany(
+        { sortOrder: { $gt: deletedOrder } },
+        { $inc: { sortOrder: -1 } },
+      );
 
       return c.json({
         message: "blog deleted",

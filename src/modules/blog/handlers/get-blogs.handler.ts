@@ -6,7 +6,7 @@ import { HTTPException } from "hono/http-exception";
 
 export const getAllBlogs = factory.createHandlers(async (c) => {
   try {
-    const blogs = await BlogsModel.find();
+    const blogs = await BlogsModel.find().sort({ sortOrder: 1 });
 
     return c.json({
       message: "blogs fetched",

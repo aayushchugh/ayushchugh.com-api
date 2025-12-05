@@ -25,7 +25,14 @@ export const deleteExperienceById = factory.createHandlers(
         });
       }
 
+      const deletedOrder = experience.sortOrder;
+
       await WorkExperienceModel.findByIdAndDelete(id);
+
+      await WorkExperienceModel.updateMany(
+        { sortOrder: { $gt: deletedOrder } },
+        { $inc: { sortOrder: -1 } },
+      );
 
       return c.json(
         {

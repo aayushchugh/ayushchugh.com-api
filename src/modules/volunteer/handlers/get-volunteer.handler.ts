@@ -6,7 +6,7 @@ import { HTTPException } from "hono/http-exception";
 
 export const getVolunteerExp = factory.createHandlers(async (c) => {
   try {
-    const volunteerExps = await VolunteerModel.find();
+    const volunteerExps = await VolunteerModel.find().sort({ sortOrder: 1 });
 
     return c.json(
       {

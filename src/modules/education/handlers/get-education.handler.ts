@@ -6,7 +6,7 @@ import { HTTPException } from "hono/http-exception";
 
 export const getEducation = factory.createHandlers(async (c) => {
   try {
-    const educations = await EducationModel.find();
+    const educations = await EducationModel.find().sort({ sortOrder: 1 });
     return c.json(
       {
         message: "Education fetched successfully",

@@ -6,6 +6,7 @@ const blogSchema = new Schema(
     title: { type: String, required: true, unique: true },
     summary: { type: String, required: true },
     content: { type: String, required: true },
+    sortOrder: { type: Number, required: true },
   },
   {
     timestamps: true,

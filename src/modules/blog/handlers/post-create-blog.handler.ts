@@ -3,6 +3,7 @@ import { BlogsModel } from "@/db/schema/blogs/blogs.db";
 import { factory } from "@/lib/factory";
 import { logger } from "@/lib/logger";
 import { customZValidator } from "@/middlewares/custom-z-validator";
+import { getNextOrder } from "@/utils/getNextOrder";
 import { HTTPException } from "hono/http-exception";
 import z from "zod";
 
@@ -18,8 +19,9 @@ export const createBlog = factory.createHandlers(
   async (c) => {
     try {
       const { title, summary, content } = c.req.valid("json");
+      const sortOrder = await getNextOrder("blogs");
 
-      await BlogsModel.create({ title: title, summary: summary, content: content });
+      await BlogsModel.create({ title: title, summary: summary, content: content, sortOrder });
 
       return c.json({ message: "Blog created successfully" }, StatusCodes.HTTP_201_CREATED);
     } catch (err) {

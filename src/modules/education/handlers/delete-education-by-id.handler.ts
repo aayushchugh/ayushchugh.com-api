@@ -16,7 +16,21 @@ export const deleteEducationById = factory.createHandlers(
   async (c) => {
     try {
       const { id } = c.req.valid("param");
+      const edu = await EducationModel.findById(id);
+
+      if (!edu) {
+        throw new HTTPException(StatusCodes.HTTP_404_NOT_FOUND, {
+          message: "Education not found",
+        });
+      }
+
+      const deletedOrder = edu.sortOrder;
       await EducationModel.findByIdAndDelete(id);
+
+      await EducationModel.updateMany(
+        { sortOrder: { $gt: deletedOrder } },
+        { $inc: { sortOrder: -1 } },
+      );
 
       return c.json({
         message: "education deleted",

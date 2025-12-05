@@ -25,6 +25,7 @@ const educationSchema = new Schema(
     endDate: {
       type: Date,
     },
+    sortOrder: { type: Number, required: true },
   },
   {
     timestamps: true,

@@ -16,7 +16,22 @@ export const deleteVolunteerExpById = factory.createHandlers(
   async (c) => {
     try {
       const { id } = c.req.valid("param");
-      const volunteerExp = await VolunteerModel.findByIdAndDelete(id);
+      const volunteerExp = await VolunteerModel.findById(id);
+
+      if (!volunteerExp) {
+        throw new HTTPException(StatusCodes.HTTP_404_NOT_FOUND, {
+          message: "Volunteer exp not found",
+        });
+      }
+
+      const deletedOrder = volunteerExp.sortOrder;
+
+      await VolunteerModel.findByIdAndDelete(id);
+
+      await VolunteerModel.updateMany(
+        { sortOrder: { $gt: deletedOrder } },
+        { $inc: { sortOrder: -1 } },
+      );
 
       return c.json(
         {

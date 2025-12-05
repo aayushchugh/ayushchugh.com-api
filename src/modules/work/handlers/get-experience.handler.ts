@@ -6,27 +6,15 @@ import { HTTPException } from "hono/http-exception";
 
 export const getAllExperiences = factory.createHandlers(async (c) => {
   try {
-    const experiences = await WorkExperienceModel.find().lean();
+    const experiences = await WorkExperienceModel.find().sort({ sortOrder: 1 }).lean();
 
     experiences.forEach((exp) => {
-      if (exp.positions) {
+      if (exp.positions && Array.isArray(exp.positions)) {
         exp.positions.sort(
           (a: { startDate: Date }, b: { startDate: Date }) =>
             new Date(b.startDate).getTime() - new Date(a.startDate).getTime(),
         );
       }
-    });
-
-    experiences.sort((a, b) => {
-      const aLatest = a.positions?.[0]?.startDate
-        ? new Date(a.positions[0].startDate).getTime()
-        : 0;
-
-      const bLatest = b.positions?.[0]?.startDate
-        ? new Date(b.positions[0].startDate).getTime()
-        : 0;
-
-      return bLatest - aLatest;
     });
 
     return c.json(
